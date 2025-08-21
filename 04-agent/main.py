@@ -2,12 +2,28 @@ from dotenv import load_dotenv
 import os
 from openai import OpenAI
 import json
-
+import requests
+import os
 load_dotenv()
 client = OpenAI()
 
+def run_command(cmd: str):
+    result = os.system(cmd)
+    return result
+
 def get_weather(city: str):
-    return "42 degree c"
+    url = f"https://wttr.in/{city}?format=%C+%t"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        return f"The weather in {city} is {response.text}."
+    return "Something went wrong"
+
+
+available_tools ={
+    "get_weather": get_weather,
+    "run_command": run_command
+}
 
 
 SYSTEM_PROMPT ="""
@@ -35,6 +51,7 @@ SYSTEM_PROMPT ="""
         
         Available Tools:
             -"get_weather": Takes the city name as an input and returns the current teperature for that city
+            - "run_command": Takes linux command as a string and executes the command and returns the output after executing it.
 
         Example:
             User Query: What is the weather of new york?
@@ -49,21 +66,35 @@ SYSTEM_PROMPT ="""
 messages=[
         {"role":"system", "content": SYSTEM_PROMPT},
 ]
-
-query = input("You:>")
-messages.append({"role":"user","content":query})
-
 while True:
-    response = client.chat.completions.create(
-        model="gpt-4.1-mini",
-        response_format={"type":"json_object"},
-        messages=messages
-    )
-    messages.append({"role":"assistant", "content":response.choices[0].messsage.content})
-    parsed_json= json.loads(response.choices[0].messsage.content)
+    query = input("You:>")
+    messages.append({"role":"user","content":query})
 
-    if parsed_json.get("step") =="plan":
-        print(f"🧠:{parsed_json.get("content")}")
-        continue
+    while True:
+        response = client.chat.completions.create(
+            model="gpt-4.1-mini",
+            response_format={"type":"json_object"},
+            messages=messages
+        )
+        messages.append({"role":"assistant", "content": response.choices[0].message.content})
+        parsed_json= json.loads(response.choices[0].message.content)
 
-print(response.choices[0].message.content)
+        if parsed_json.get("step") =="plan":
+            print(f"🧠:{parsed_json.get("content")}")
+            continue
+        if parsed_json.get("step")=="action":
+            tool_function = parsed_json.get("function")
+            tool_input = parsed_json.get("input")
+
+            print(f"🛠️:Calling Tool:{tool_function} with input {tool_input}")
+
+            if available_tools.get(tool_function)!= False:
+                output = available_tools[tool_function](tool_input)
+                messages.append({"role":"user","content":json.dumps({"step":"observe","output":output})})
+                continue
+        if parsed_json.get("step")=="output":
+            print(f"✅: {parsed_json.get("content")}")
+
+
+
+# print(response.choices[0].message.content)
