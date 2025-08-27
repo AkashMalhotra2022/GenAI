@@ -25,11 +25,12 @@ embedding_model = OpenAIEmbeddings(
     model="text-embedding-3-large"
 )
 
-# Using embedding_model create embedding of split_text and store it in DB
+
+#Using embedding_model create embedding of split_text and store it in DB
 vector_store = QdrantVectorStore.from_documents(
     documents=split_text,
-    url="http://vector-db:6333",
-    collection_name="learning_vectors",
+    url ="http://localhost:6333",
+    collection_name ="learning_vectors",
     embedding=embedding_model
 )
 
