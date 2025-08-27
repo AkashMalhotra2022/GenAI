@@ -1,4 +1,4 @@
-#!/Users/akashmalhotra/Desktop/GENAI_COHORT/venv/bin/python
+#!/workspaces/GENAI_COHORT/venv/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys

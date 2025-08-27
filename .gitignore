@@ -1,3 +1,27 @@
 .env
 __pycache__/
 *.pyc
+# Virtual environment
+.venv/
+venv/
+lib64
+
+# IDE/Editor files
+.vscode/
+.devcontainer/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Shell scripts (if not needed in repo)
+*.sh
