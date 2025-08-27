@@ -1,4 +1,5 @@
 # flake8: noqa
+
 from langchain_openai import OpenAIEmbeddings
 from dotenv import load_dotenv
 from langchain_qdrant import QdrantVectorStore
@@ -14,6 +15,7 @@ embedding_model = OpenAIEmbeddings(
 
 
 vector_db = QdrantVectorStore.from_existing_collection(
+
     url ="http://localhost:6333",
     collection_name ="learning_vectors",
     embedding=embedding_model
@@ -22,7 +24,7 @@ vector_db = QdrantVectorStore.from_existing_collection(
 # Take input from the user
 query = input(">")
 
-#Vector Similarity search [query] in DB
+# Vector Similarity search [query] in DB
 vector_results = vector_db.similarity_search(
     query=query
 )
