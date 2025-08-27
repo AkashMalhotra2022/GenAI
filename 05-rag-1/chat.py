@@ -1,3 +1,4 @@
+# flake8: noqa
 from langchain_openai import OpenAIEmbeddings
 from dotenv import load_dotenv
 from langchain_qdrant import QdrantVectorStore
@@ -43,8 +44,8 @@ SYSTEM_PROMPT = f"""
 chat_completion = client.chat.completions.create(
     model="gpt-4.1",
     messages=[
-        {"role":"system","content":SYSTEM_PROMPT},
-        {"role":"user","content":query}
+        {"role" : "system","content" : SYSTEM_PROMPT},
+        {"role" : "user","content" : query}
     ]
 )
 
